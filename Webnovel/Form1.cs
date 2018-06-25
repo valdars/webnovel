@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,12 @@ namespace Webnovel
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var webnovels = new Webnovels(textBox1.Text, new System.Net.Http.HttpClient());
+            webnovels.GetChapterList(textBox2.Text);
         }
     }
 }

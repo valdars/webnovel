@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Lib
 {
@@ -34,17 +35,28 @@ namespace Lib
             return url;
         }
 
-        public async void GetChapterList(string bookId)
+        public async Task<IEnumerable<Volume>> GetChapterList(string bookId)
         {
             var url = CreateUrl("GetChapterList", ("bookId", bookId));
             var result = await _httpClient.GetStringAsync(url);
             var obj = JObject.Parse(result);
             if((int)obj["code"] == 0)
             {
-                var bookinfo = new BookInfo((JObject)obj["data"]["bookInfo"]);
-                var volumes = ((JArray)obj["data"]["volumeItems"]).Select(x => new Volume(x));
+                return ((JArray)obj["data"]["volumeItems"]).Select(x => new Volume(x));
             }
-            var t = url;
+            return null;
+        }
+
+        public async Task<Content> GetContent(string bookId, string chapterId)
+        {
+            var url = CreateUrl("GetContent", ("bookId", bookId), ("chapterId", chapterId));
+            var result = await _httpClient.GetStringAsync(url);
+            var obj = JObject.Parse(result);
+            if ((int)obj["code"] == 0)
+            {
+                return new Content((JObject)obj["data"]["chapterInfo"]);
+            }
+            return null;
         }
     }
 }
